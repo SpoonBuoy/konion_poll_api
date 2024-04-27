@@ -6,6 +6,7 @@ import (
 	"poll/models"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -57,13 +58,19 @@ func (db *Database) CreateMember(member models.PollMember) (uint64, error) {
 	return member.Id, err
 }
 func (db *Database) Save(poll models.Poll) (uint64, error) {
-	db.Db.Save(&poll)
+	txn := db.Db.Save(&poll)
+	if txn.Error != nil {
+		return 0, txn.Error
+	}
 	return poll.Id, nil
 }
 
 func (db *Database) Fetch(id uint64) (models.Poll, error) {
 	var poll models.Poll
-	db.Db.First(&poll)
+	txn := db.Db.First(&poll)
+	if txn.Error != nil {
+		return poll, txn.Error
+	}
 	return poll, nil
 }
 func (db *Database) AddVote(vote models.Vote) error {
@@ -71,9 +78,20 @@ func (db *Database) AddVote(vote models.Vote) error {
 	return nil
 }
 func (db *Database) AddReference(ref models.Reference) error {
-	db.Db.Save(&ref)
+	txn := db.Db.Save(&ref)
+	if txn.Error != nil {
+		return txn.Error
+	}
 	return nil
 }
 func (db *Database) End(pollId uint64) error {
 	return nil
+}
+func (db *Database) GetPollById(c *gin.Context, id uint64) (models.Poll, error) {
+	var res models.Poll
+	txn := db.Db.First(&res, id)
+	if txn.Error != nil {
+		return res, txn.Error
+	}
+	return res, nil
 }

@@ -56,7 +56,11 @@ func (pc *PollController) EndPoll(c *gin.Context) {
 }
 
 func (pc *PollController) FetchPoll(c *gin.Context) {
-
+	var req models.GetPollReq
+	err := c.BindUri(req)
+	HandleBindingError(c, err)
+	data, err := pc.Service.GetPoll(c, req)
+	HandleServe(c, err, *data)
 }
 
 func HandleServe(c *gin.Context, err error, data any) {

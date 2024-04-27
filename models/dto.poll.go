@@ -1,5 +1,8 @@
 package models
 
+type GetPollReq struct {
+	Id uint64 `uri:"id" binding:"required"`
+}
 type CreateMemberReq struct {
 	Name        string `json:"name"`
 	Avatar      string `json:"avatar"`

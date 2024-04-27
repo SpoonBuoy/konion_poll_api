@@ -1,6 +1,10 @@
 package service
 
-import "poll/models"
+import (
+	"poll/models"
+
+	"github.com/gin-gonic/gin"
+)
 
 type Service interface {
 	CreateMember(req models.CreateMemberReq) (uint64, error)
@@ -8,5 +12,5 @@ type Service interface {
 	RegisterVote(req models.RegisterVoteReq, from string) error
 	CreateReference(req models.CreateReferenceReq) error
 	EndPoll(pollId uint64) error
-	FetchPoll(pollId uint64) (*models.Poll, error)
+	GetPoll(c *gin.Context, req models.GetPollReq) (models.Poll, error)
 }
