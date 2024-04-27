@@ -1,0 +1,13 @@
+---
+server:
+  port: 9010
+db:
+  host:
+  port:
+  name:
+  user:
+  password:
+redis:
+  addr:
+  password:
+  db:

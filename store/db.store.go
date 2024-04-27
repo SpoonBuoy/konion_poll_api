@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"log"
 	"poll/models"
 	"sync"
 
@@ -15,12 +16,19 @@ type Database struct {
 	Mu sync.Mutex
 }
 
+var (
+	host     = "rain.db.elephantsql.com"
+	password = "k1HV8_hFYKkX9-ci6FzuHWUTRnAxQAFp"
+	user     = "tgaryate"
+)
+
 func NewDatabase() (*Database, error) {
-	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, user)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to postgres : \n %v", err.Error())
 	}
+	log.Printf("Connected to database %v", db)
 	Db := Database{
 		Db: db,
 	}

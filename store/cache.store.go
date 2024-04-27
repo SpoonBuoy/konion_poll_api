@@ -24,10 +24,15 @@ var (
 	REF  = "REF"
 )
 
+var (
+	addr = ""
+	pass = ""
+)
+
 func NewCache() (*Cache, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "",
-		Password: "",
+		Addr:     addr,
+		Password: pass,
 		DB:       0,
 	})
 	c := Cache{
@@ -35,10 +40,11 @@ func NewCache() (*Cache, error) {
 	}
 	ctx := context.Background()
 	pong, err := c.Client.Ping(ctx).Result()
-	log.Println("Connected to Redis", pong)
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("Connected to Redis", pong)
 	return &c, nil
 }
 func (c *Cache) CreateMember(member models.PollMember) (uint64, error) {
@@ -72,6 +78,16 @@ func (c *Cache) Fetch(id uint64) (models.Poll, error) {
 		return models.Poll{}, fmt.Errorf("failed to unmarshall poll from redis : %v", err)
 	}
 	return poll, nil
+}
+func (c *Cache) GetVotes(memberId uint64, pollId uint64) (uint64, error) {
+	key := UniqueKey(VOTE, pollId, memberId)
+	val, err := c.Client.Get(context.Background(), key).Result()
+
+	if err != nil {
+		return 0, err
+	}
+	votes, _ := strconv.Atoi(val)
+	return uint64(votes), nil
 }
 func (c *Cache) AddVote(vote models.Vote) error {
 	c.Mu.Lock()

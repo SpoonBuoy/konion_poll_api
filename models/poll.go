@@ -22,7 +22,7 @@ type Vote struct {
 	FromLocation string    `gorm:"from_location"`
 	RegisteredAt time.Time `gorm:"registered_at"`
 	To           uint64    `gorm:"to"`
-	IsOrgainc    bool      `gorm:"is_organic"`
+	IsOrganic    bool      `gorm:"is_organic"`
 }
 
 type Reference struct {
