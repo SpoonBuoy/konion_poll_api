@@ -8,6 +8,7 @@ import (
 	"poll/store"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,6 +20,14 @@ type PollService struct {
 func NewPollService(store store.PollStore) (*PollService, error) {
 	return &PollService{Store: store, Logger: *logrus.New()}, nil
 }
+func (ps *PollService) GetPoll(c *gin.Context, req models.GetPollReq) (*models.Poll, error) {
+	data, err := ps.Store.GetPollById(c, req.Id)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("failed to get members: ERROR - {%v}", err))
+	}
+	return &data, nil
+}
+
 func (ps *PollService) CreateMember(req models.CreateMemberReq) (uint64, error) {
 	member := models.PollMember{
 		Name:             req.Name,

@@ -6,6 +6,7 @@ import (
 	"poll/models"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -76,4 +77,12 @@ func (db *Database) AddReference(ref models.Reference) error {
 }
 func (db *Database) End(pollId uint64) error {
 	return nil
+}
+func (db *Database) GetPollById(c *gin.Context, id uint64) (models.Poll, error) {
+	var res models.Poll
+	txn := db.Db.First(&res, id)
+	if txn.Error != nil {
+		return res, txn.Error
+	}
+	return res, nil
 }

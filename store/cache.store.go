@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -164,4 +165,9 @@ func UniqueKey(str string, x uint64, y uint64) string {
 	stry := strconv.Itoa(int(y))
 	//will have to hash it as well
 	return strx + str + stry
+}
+
+func (c *Cache) GetPollById(ctx *gin.Context, id uint64) (models.Poll, error) {
+	var res models.Poll
+	return res, nil
 }
