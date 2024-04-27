@@ -37,14 +37,14 @@ func init() {
 
 	//config file
 	PORT = fmt.Sprintf(":%v", viper.Get("server.port"))
-	DB_HOST = fmt.Sprintf(":%v", viper.Get("db.host"))
-	DB_PORT = fmt.Sprintf(":%v", viper.Get("db.port"))
-	DB_NAME = fmt.Sprintf(":%v", viper.Get("db.name"))
-	DB_USER = fmt.Sprintf(":%v", viper.Get("db.user"))
-	DB_PASWD = fmt.Sprintf(":%v", viper.Get("db.password"))
-	REDIS_ADDR = fmt.Sprintf(":%v", viper.Get("redis.addr"))
-	REDIS_PASWD = fmt.Sprintf(":%v", viper.Get("redis.password"))
-	REDIS_DB = fmt.Sprintf(":%v", viper.Get("redis.db"))
+	DB_HOST = fmt.Sprintf("%v", viper.Get("db.host"))
+	DB_PORT = fmt.Sprintf("%v", viper.Get("db.port"))
+	DB_NAME = fmt.Sprintf("%v", viper.Get("db.name"))
+	DB_USER = fmt.Sprintf("%v", viper.Get("db.user"))
+	DB_PASWD = fmt.Sprintf("%v", viper.Get("db.password"))
+	REDIS_ADDR = fmt.Sprintf("%v", viper.Get("redis.addr"))
+	REDIS_PASWD = fmt.Sprintf("%v", viper.Get("redis.password"))
+	REDIS_DB = fmt.Sprintf("%v", viper.Get("redis.db"))
 	log.Printf("CONFIG \n Port %s \n DB : %s \n Redis %s", PORT, DB_HOST+DB_PORT, REDIS_ADDR)
 
 }
@@ -52,11 +52,12 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	dbStore, err := store.NewDatabase()
+	dbStore, err := store.NewDatabase(DB_HOST, DB_PASWD, DB_USER, DB_NAME)
 	if err != nil {
 		log.Printf("Error %v", err.Error())
 	}
-	cacheStore, err := store.NewCache()
+	//dbStore.AutoMigrate()
+	cacheStore, err := store.NewCache(REDIS_ADDR)
 	if err != nil {
 		log.Printf("Error %v", err.Error())
 	}

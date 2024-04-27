@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"poll/models"
@@ -30,7 +31,7 @@ func (ps *PollService) CreateMember(req models.CreateMemberReq) (uint64, error) 
 	}
 	id, err := ps.Store.CreateMember(member)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create poll member \n : %v", err.Error())
+		return 0, errors.New(fmt.Sprintf("failed to create poll member \n : %v", err.Error()))
 	}
 	return id, nil
 }
@@ -43,7 +44,7 @@ func (ps *PollService) CreatePoll(req models.CreatePollReq) (uint64, error) {
 		Banner:      req.Description,
 		Members:     []models.PollMember{},
 		CreatedAt:   time.Now(),
-		References:  []models.Reference{},
+		//References:  []models.Reference{},
 	}
 	id, err := ps.Store.Save(poll)
 	if err != nil {

@@ -24,15 +24,10 @@ var (
 	REF  = "REF"
 )
 
-var (
-	addr = ""
-	pass = ""
-)
-
-func NewCache() (*Cache, error) {
+func NewCache(addr string) (*Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
-		Password: pass,
+		Password: "",
 		DB:       0,
 	})
 	c := Cache{

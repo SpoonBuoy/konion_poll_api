@@ -2,12 +2,12 @@
 server:
   port: 9010
 db:
-  host:
-  port:
-  name:
-  user:
-  password:
+  host: 3.108.66.65
+  port: 5713
+  name: konion 
+  user: myuser
+  password: mypassword
 redis:
-  addr:
+  addr: 3.108.66.65:6379
   password:
   db:

@@ -16,14 +16,14 @@ type Database struct {
 	Mu sync.Mutex
 }
 
-var (
-	host     = "rain.db.elephantsql.com"
-	password = "k1HV8_hFYKkX9-ci6FzuHWUTRnAxQAFp"
-	user     = "tgaryate"
-)
+// var (
+// 	host     = "rain.db.elephantsql.com"
+// 	password = "k1HV8_hFYKkX9-ci6FzuHWUTRnAxQAFp"
+// 	user     = "tgaryate"
+// )
 
-func NewDatabase() (*Database, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, user)
+func NewDatabase(host string, password string, user string, dbname string) (*Database, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, dbname)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to postgres : \n %v", err.Error())
@@ -35,9 +35,26 @@ func NewDatabase() (*Database, error) {
 	return &Db, nil
 }
 
+func (db *Database) AutoMigrate() {
+	log.Println("Running Migrations")
+	err := db.Db.AutoMigrate(
+
+		&models.Poll{},
+		&models.Vote{},
+		&models.Reference{},
+		&models.PollMember{},
+		&models.Moderator{},
+	)
+	if err != nil {
+		log.Fatalf("failed to create tables")
+		return
+	}
+	log.Println("tables created")
+}
+
 func (db *Database) CreateMember(member models.PollMember) (uint64, error) {
-	db.Db.Save(&member)
-	return member.Id, nil
+	err := db.Db.Save(&member).Error
+	return member.Id, err
 }
 func (db *Database) Save(poll models.Poll) (uint64, error) {
 	db.Db.Save(&poll)

@@ -2,19 +2,6 @@ package models
 
 import "time"
 
-type Poll struct {
-	Id          uint64       `gorm:"id;primary_key"`
-	IsActive    bool         `gorm:"is_active"`
-	Title       string       `gorm:"title"`
-	Description string       `gorm:"description"`
-	Banner      string       `gorm:"banner"`
-	Members     []PollMember `gorm:"members"`
-	Winner      PollMember   `gorm:"winner"`
-	Mod         Moderator    `gorm:"mod"`
-	CreatedAt   time.Time    `gorm:"created_at"`
-	References  []Reference  `gorm:"references"`
-}
-
 type Vote struct {
 	Id           uint64    `gorm:"id;primary_key"`
 	PollId       uint64    `gorm:"poll_id"`
@@ -35,6 +22,7 @@ type Reference struct {
 
 type PollMember struct {
 	Id               uint64 `gorm:"id;primary_key"`
+	PollId           uint64 `gorm:"poll_id"`
 	Name             string `gorm:"name"`
 	Avatar           string `gorm:"avatar"`
 	Description      string `gorm:"description"`
@@ -46,9 +34,23 @@ type PollMember struct {
 
 type Moderator struct {
 	Id         uint64 `gorm:"id;primary_key"`
+	PollId     uint64 `gorm:"poll_id"`
 	Name       string `gorm:"name"`
 	Email      string `gorm:"email"`
 	Phone      string `gorm:"phone"`
 	Password   string `gorm:"password"`
 	TotalPolls uint32 `gorm:"total_polls"`
+}
+type Poll struct {
+	Id       uint64 `gorm:"id;primary_key"`
+	IsActive bool   `gorm:"is_active"`
+	//References  []Reference  `gorm:"references;foreignKey:PollId"`
+	Title       string       `gorm:"title"`
+	Description string       `gorm:"description"`
+	Banner      string       `gorm:"banner"`
+	Members     []PollMember `gorm:"members;foreignKey:PollId"`
+	Winner      PollMember   `gorm:"winner;foreignKey:PollId"`
+	Mod         Moderator    `gorm:"mod; foreignKey:PollId"`
+	CreatedAt   time.Time    `gorm:"created_at"`
+	//References  []Reference  `gorm:"references;foreignKey:PollId"`
 }
